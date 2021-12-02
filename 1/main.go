@@ -6,6 +6,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/tobiaskohlbau/adventofcode2021/pkg/collections"
 	"github.com/tobiaskohlbau/adventofcode2021/pkg/input"
 )
 
@@ -29,14 +30,13 @@ func execute() error {
 		return fmt.Errorf("error reading input file: %w", err)
 	}
 
-	items := []int{}
-	for _, line := range lines {
+	items, err := collections.Map(lines, func(line string) (int, error) {
 		i, err := strconv.Atoi(line)
 		if err != nil {
-			return fmt.Errorf("error parsing line: %w", err)
+			return -1, fmt.Errorf("error parsing line: %w", err)
 		}
-		items = append(items, i)
-	}
+		return i, nil
+	})
 
 	// part one
 	count := 0

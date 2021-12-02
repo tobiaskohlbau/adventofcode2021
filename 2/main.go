@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/tobiaskohlbau/adventofcode2021/pkg/collections"
 	"github.com/tobiaskohlbau/adventofcode2021/pkg/input"
 )
 
@@ -35,17 +36,19 @@ func execute() error {
 		Count     int
 	}
 
-	movements := make([]Movement, 0)
-	for _, line := range lines {
+	movements, err := collections.Map(lines, func(line string) (Movement, error) {
 		items := strings.Split(line, " ")
 		if len(items) != 2 {
-			return fmt.Errorf("invalid line: %s", line)
+			return Movement{}, fmt.Errorf("invalid line: %s", line)
 		}
 		count, err := strconv.Atoi(items[1])
 		if err != nil {
-			return fmt.Errorf("error parsing movement count: %w", err)
+			return Movement{}, fmt.Errorf("error parsing movement count: %w", err)
 		}
-		movements = append(movements, Movement{Direction: items[0], Count: count})
+		return Movement{Direction: items[0], Count: count}, nil
+	})
+	if err != nil {
+		return fmt.Errorf("error parsing input: %w", err)
 	}
 
 	// part one
